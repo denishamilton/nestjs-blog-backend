@@ -1,7 +1,8 @@
 // src/user/user.controller.ts
 
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
 import { UserService } from './user.service';
+import { User } from './user.interface';
 
 @Controller('user')
 export class UserController {
@@ -13,10 +14,16 @@ export class UserController {
         return this.userService.getUsers();
     }
 
-    // @Get(':id')
-    // getUserById(@Param('id') id: string) {
-    //     const userId = parseInt(id, 10);
-    //     return this.userService.getUserById(userId);
-    // }
+    @Get(':id')
+    getUserById(@Param('id') id: string):User {
+        const userId = parseInt(id, 10);
+        const user = this.userService.getUserById(userId);
+        if (!user) {
+            throw new NotFoundException(`User with id ${id} not found`);
+        }
+
+        return user
+
+    }
 
 }

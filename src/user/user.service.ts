@@ -9,7 +9,7 @@ export class UserService {
         return users
     }
 
-    // getUserById(id: number) {
-    //     return users.find(user => user.id === id);
-    // }
+    getUserById(id: number) {
+        return users.find(user => user.id === id);
+    }
 }
