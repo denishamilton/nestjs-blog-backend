@@ -1,29 +1,33 @@
 // src/user/user.controller.ts
-
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import { Controller, Get, NotFoundException, Param, Post, Body, Delete } from '@nestjs/common';
 import { UserService } from './user.service';
-import { User } from './user.interface';
+import { User } from './user.entity';
 
 @Controller('user')
 export class UserController {
-    constructor (private readonly userService: UserService) {    
+  constructor(private readonly userService: UserService) {}
+
+  @Get()
+  getUsers(): Promise<User[]> {
+    return this.userService.getUsers();
+  }
+
+  @Get(':id')
+  async getUserById(@Param('id') id: string): Promise<User> {
+    const user = await this.userService.getUserById(parseInt(id, 10));
+    if (!user) {
+      throw new NotFoundException(`User with id ${id} not found`);
     }
+    return user;
+  }
 
-    @Get()
-    getUsers() {
-        return this.userService.getUsers();
-    }
+  @Post()
+  createUser(@Body() user: User): Promise<User> {
+    return this.userService.createUser(user);
+  }
 
-    @Get(':id')
-    getUserById(@Param('id') id: string):User {
-        const userId = parseInt(id, 10);
-        const user = this.userService.getUserById(userId);
-        if (!user) {
-            throw new NotFoundException(`User with id ${id} not found`);
-        }
-
-        return user
-
-    }
-
+  @Delete(':id')
+  removeUser(@Param('id') id: string): Promise<void> {
+    return this.userService.removeUser(parseInt(id, 10));
+  }
 }
